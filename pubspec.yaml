@@ -1,0 +1,50 @@
+name: cyruz_124230062_merryhsinaga
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  crypto: ^3.0.3 
+  shared_preferences: ^2.2.3
+  cupertino_icons: ^1.0.8
+  image_picker: ^1.1.2
+  google_fonts: ^6.1.0
+  http: ^1.2.0
+  url_launcher: ^6.3.0
+  intl: ^0.18.1
+  geolocator: ^13.0.1
+  google_maps_flutter: ^2.6.0
+  flutter_map: ^7.0.0
+  latlong2: ^0.9.0
+  timezone: ^0.9.2
+  flutter_local_notifications: ^17.1.2
+  permission_handler: ^11.3.1
+  sensors_plus: ^3.1.0
+  audioplayers: ^5.2.1
+  flutter_cache_manager: ^3.3.1  
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/background.png
+    - assets/cyruz.png
+    - assets/audio/a_major.mp3
+    - assets/audio/a_minor.mp3
+    - assets/audio/b_major.mp3
+    - assets/audio/b_minor.mp3
+    - assets/audio/c_major.mp3
+    - assets/audio/c_minor.mp3
+    - assets/audio/all.mp3
