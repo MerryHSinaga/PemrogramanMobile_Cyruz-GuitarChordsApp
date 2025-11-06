@@ -174,13 +174,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         const SizedBox(height: 25),
-        Text(
-          widget.username,
-          style: const TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 1.5,
+
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.purple.withOpacity(0.5), 
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.purpleAccent.withOpacity(0.5)),
+              ),
+              child: Text(
+                widget.username,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  letterSpacing: 1.2,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
         ),
       ],
@@ -274,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ElevatedButton.icon(
           onPressed: _saveMessage,
           icon: const Icon(Icons.send_rounded, color: Colors.white),
-          label: const Text("Simpan Perubahan"),
+          label: const Text("Simpan"),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple,
             shape: RoundedRectangleBorder(
@@ -298,9 +315,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.purple,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 15),
+        padding: const EdgeInsets.symmetric(vertical: 10),
       ),
     );
   }

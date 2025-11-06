@@ -287,7 +287,7 @@ class _ConvertScreenState extends State<ConvertScreen> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -378,7 +378,7 @@ class _ConvertScreenState extends State<ConvertScreen> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

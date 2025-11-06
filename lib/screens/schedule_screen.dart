@@ -16,7 +16,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   final TextEditingController _eventNameController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   TimeOfDay? _selectedTime;
-  String _baseZone = 'WIB';
+  String _selectedZone = 'WIB'; 
   List<Map<String, dynamic>> _reminders = [];
   bool _isAdding = false;
 
@@ -109,7 +109,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     if (_isAdding) return;
     if (_eventNameController.text.isEmpty || _selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lengkapi nama kegiatan dan waktu!')),
+        const SnackBar(content: Text('Please complete the name and time!')),
       );
       return;
     }
@@ -128,22 +128,21 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       if (dt.isBefore(DateTime.now())) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Waktu yang diinput harus di atas sekarang!')),
+              content: Text('The selected time must be after now!')),
         );
         setState(() => _isAdding = false);
         return;
       }
 
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-      final converted = _convertAllZones(dt, _baseZone);
+      final converted = _convertAllZones(dt, _selectedZone);
       final name = _eventNameController.text;
-      final zone = _baseZone;
 
       final reminder = {
         'id': id.toString(),
         'name': name,
         'datetime': dt.toIso8601String(),
-        'zone': zone,
+        'zone': _selectedZone, 
         'converted': converted,
       };
 
@@ -158,11 +157,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         id: id + 10,
         title: 'Cyruz',
         body:
-            'Jadwal berhasil disimpan. Jangan lupa "$name" pada $formattedDate pukul $formattedTime. Cyruz siap menemanimu!',
+            'Jadwal berhasil disimpan. Jangan lupa "$name" pada $formattedDate pukul $formattedTime ($_selectedZone). Cyruz siap menemanimu!',
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Jadwal berhasil disimpan.')),
+        const SnackBar(content: Text('Jadwal berhasil disimpan!')),
       );
     } finally {
       setState(() {
@@ -178,7 +177,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     await _saveReminders();
   }
 
-  Widget _buildDropdown() {
+  Widget _buildZoneDropdown() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
@@ -187,7 +186,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: _baseZone,
+          value: _selectedZone,
           dropdownColor: Colors.grey[900],
           items: _zoneOffsets.keys
               .map((z) => DropdownMenuItem<String>(
@@ -195,7 +194,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     child: Text(z, style: const TextStyle(color: Colors.white)),
                   ))
               .toList(),
-          onChanged: (v) => setState(() => _baseZone = v!),
+          onChanged: (v) => setState(() => _selectedZone = v!),
         ),
       ),
     );
@@ -203,10 +202,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   Widget _buildScheduleCard(Map<String, dynamic> r) {
     final dt = DateTime.parse(r['datetime']);
+    final zone = r['zone'];
     final converted = Map<String, String>.from(r['converted']);
     final sortedConverted = Map<String, String>.fromEntries([
-      ...converted.entries.where((e) => e.key == _baseZone),
-      ...converted.entries.where((e) => e.key != _baseZone),
+      ...converted.entries.where((e) => e.key == zone),
+      ...converted.entries.where((e) => e.key != zone),
     ]);
     final isDone = DateTime.now().isAfter(dt);
 
@@ -222,7 +222,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${r['name']}${isDone ? " (Selesai)" : ""}',
+            '${r['name']}${isDone ? " (Done)" : ""}',
             style: const TextStyle(
               color: Color.fromARGB(255, 164, 55, 189),
               fontSize: 16,
@@ -234,13 +234,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               style: const TextStyle(color: Colors.white70, fontSize: 16)),
           const Divider(color: Colors.white24),
           ...sortedConverted.entries.map((e) => Text(
-              'Time in ${e.key}: ${e.value}',
-              style: TextStyle(
-                color: e.key == _baseZone ? Colors.purpleAccent : Colors.white54,
-                fontSize: 16,
-                fontWeight:
-                    e.key == _baseZone ? FontWeight.bold : FontWeight.normal,
-              ))),
+                'Time in ${e.key}: ${e.value}',
+                style: TextStyle(
+                  color: e.key == zone ? Colors.purpleAccent : Colors.white54,
+                  fontSize: 16,
+                  fontWeight:
+                      e.key == zone ? FontWeight.bold : FontWeight.normal,
+                ),
+              )),
           Align(
             alignment: Alignment.topRight,
             child: IconButton(
@@ -361,7 +362,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildDropdown(),
+                _buildZoneDropdown(), 
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
                   onPressed: _isAdding ? null : _addSchedule,
