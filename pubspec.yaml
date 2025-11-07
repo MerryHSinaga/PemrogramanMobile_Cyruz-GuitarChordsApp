@@ -39,7 +39,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/background.png
+    - assets/background.jpeg
     - assets/cyruz.png
     - assets/audio/a_major.mp3
     - assets/audio/a_minor.mp3

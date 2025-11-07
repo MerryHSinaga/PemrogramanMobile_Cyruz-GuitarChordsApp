@@ -108,46 +108,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset('assets/background.png', fit: BoxFit.cover),
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-            child: Container(color: Colors.black.withOpacity(0)),
-          ),
-          SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                const Text(
-                  "Cyruz is glad to have you here, let’s keep your profile in tune.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                    shadows: [
-                      Shadow(
-                        color: Colors.purpleAccent,
-                        blurRadius: 10,
-                        offset: Offset(0, 0),
-                      ),
-                    ],
+      backgroundColor: Colors.black, // ✅ Hitam polos
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            const Text(
+              "Cyruz is glad to have you here, let’s keep your profile in tune.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w500,
+                shadows: [
+                  Shadow(
+                    color: Colors.purpleAccent,
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
                   ),
-                ),
-                const SizedBox(height: 25),
-                _buildProfileHeader(),
-                const SizedBox(height: 40),
-                _buildMessageCard(),
-                const SizedBox(height: 40),
-                _buildLogoutButton(),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 25),
+            _buildProfileHeader(),
+            const SizedBox(height: 40),
+            _buildMessageCard(),
+            const SizedBox(height: 40),
+            _buildLogoutButton(),
+          ],
+        ),
       ),
     );
   }
@@ -173,32 +163,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             backgroundColor: Colors.black54,
           ),
         ),
-        const SizedBox(height: 25),
-
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.5), 
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.purpleAccent.withOpacity(0.5)),
-              ),
-              child: Text(
-                widget.username,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  letterSpacing: 1.2,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
+        const SizedBox(height: 20),
+        // ✅ Hanya teks username tanpa kotak
+        Text(
+          widget.username,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            letterSpacing: 1.2,
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -207,36 +182,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildMessageCard() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(25),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.all(25),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: Colors.purple),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    "Kesan dan Pesan",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+      child: Container(
+        padding: const EdgeInsets.all(25),
+        decoration: BoxDecoration(
+          color: Colors.grey[900], // ✅ Warna abu gelap seperti input field
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Colors.grey[800]!),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Text(
+                  "Kesan dan Pesan",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
-                  const Spacer(),
-                  _buildEditButton(),
-                ],
-              ),
-              const Divider(color: Colors.white38, height: 30),
-              if (isEditing) _buildEditingSection() else _buildMessageText(),
-            ],
-          ),
+                ),
+                const Spacer(),
+                _buildEditButton(),
+              ],
+            ),
+            const Divider(color: Colors.white38, height: 30),
+            if (isEditing) _buildEditingSection() else _buildMessageText(),
+          ],
         ),
       ),
     );
@@ -278,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.black.withOpacity(0.4),
+            fillColor: Colors.grey[850], // ✅ abu gelap seperti halaman lain
             hintText: "Tulis kesan dan pesan!",
             hintStyle: const TextStyle(color: Colors.white54),
             border: OutlineInputBorder(

@@ -194,201 +194,180 @@ class _ConvertScreenState extends State<ConvertScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset('assets/background.png', fit: BoxFit.cover),
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-            child: Container(color: Colors.black.withOpacity(0.3)),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: ListView(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: ListView(
+            children: [
+              const Text(
+                "Simplify guitar price checks, wherever music takes you.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w500,
+                  shadows: [
+                    Shadow(
+                      color: Colors.purpleAccent,
+                      blurRadius: 10,
+                      offset: Offset(0, 0),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 25),
+
+              TextField(
+                controller: _nameController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white10,
+                  hintText: 'Guitar Type',
+                  hintStyle: const TextStyle(color: Colors.white54),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              TextField(
+                controller: _priceController,
+                style: const TextStyle(color: Colors.white),
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white10,
+                  hintText: 'Price',
+                  hintStyle: const TextStyle(color: Colors.white54),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              Row(
                 children: [
-                  // Judul
-                  const Text(
-                    "Simplify guitar price checks, wherever music takes you.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w500,
-                      shadows: [
-                        Shadow(
-                          color: Colors.purpleAccent,
-                          blurRadius: 10,
-                          offset: Offset(0, 0),
-                        ),
-                      ],
-                    ),
+                  Expanded(child: _currencyDropdown(_fromCurrency, true)),
+                  IconButton(
+                    onPressed: _swapCurrencies,
+                    icon: const Icon(Icons.swap_horiz, color: mainColor),
+                    tooltip: 'Swap currencies',
                   ),
-                  const SizedBox(height: 25),
+                  Expanded(child: _currencyDropdown(_toCurrency, false)),
+                ],
+              ),
+              const SizedBox(height: 20),
 
-                  // Input tipe gitar
-                  TextField(
-                    controller: _nameController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white10,
-                      hintText: 'Guitar Type',
-                      hintStyle: const TextStyle(color: Colors.white54),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
+              ElevatedButton.icon(
+                onPressed: _isLoading ? null : _convertPrice,
+                icon: const Icon(Icons.currency_exchange, color: Colors.white),
+                label: Text(
+                  _isLoading ? 'Loading...' : 'Convert',
+                  style: const TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 16),
+                ),
+              ),
 
-                  // Input harga gitar
-                  TextField(
-                    controller: _priceController,
-                    style: const TextStyle(color: Colors.white),
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white10,
-                      hintText: 'Price',
-                      hintStyle: const TextStyle(color: Colors.white54),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+              const SizedBox(height: 5),
 
-                  // Pilih mata uang
-                  Row(
+              if (_isLoading)
+                const Center(child: CircularProgressIndicator(color: mainColor))
+              else if (_convertedPrice != null)
+                _buildResultCard(_nameController.text,
+                    _formatInputPriceSafely(), _convertedPrice!),
+
+              if (_recentConversions.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                GestureDetector(
+                  onTap: () => setState(() => _showRecent = !_showRecent),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(child: _currencyDropdown(_fromCurrency, true)),
-                      IconButton(
-                        onPressed: _swapCurrencies,
-                        icon: const Icon(Icons.swap_horiz, color: mainColor),
-                        tooltip: 'Swap currencies',
+                      const Text(
+                        'Recent Converts',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      Expanded(child: _currencyDropdown(_toCurrency, false)),
+                      Icon(
+                        _showRecent
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: Colors.purpleAccent,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 20),
-
-                  // Tombol Convert
-                  ElevatedButton.icon(
-                    onPressed: _isLoading ? null : _convertPrice,
-                    icon: const Icon(Icons.currency_exchange,
-                        color: Colors.white),
-                    label: Text(
-                      _isLoading ? 'Loading...' : 'Convert',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
+                ),
+                const SizedBox(height: 12),
+                if (_showRecent)
+                  for (var item in _recentConversions)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: mainColor),
                       ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 5),
-
-                  // Hasil konversi
-                  if (_isLoading)
-                    const Center(
-                        child: CircularProgressIndicator(color: mainColor))
-                  else if (_convertedPrice != null)
-                    _buildResultCard(_nameController.text,
-                        _formatInputPriceSafely(), _convertedPrice!),
-
-                  // Recent convert
-                  if (_recentConversions.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    GestureDetector(
-                      onTap: () => setState(() => _showRecent = !_showRecent),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Recent Converts',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Icon(
-                            _showRecent
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            color: Colors.purpleAccent,
-                          ),
+                          Text(item['name'],
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 164, 55, 189),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 6),
+                          Text(item['from'],
+                              style: const TextStyle(
+                                  color: Colors.white70, fontSize: 16)),
+                          Text(item['to'],
+                              style: const TextStyle(
+                                  color: Colors.white70, fontSize: 16)),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    if (_showRecent)
-                      for (var item in _recentConversions)
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 10),
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: mainColor),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(item['name'],
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(255, 164, 55, 189),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              const SizedBox(height: 6),
-                              Text(item['from'],
-                                  style: const TextStyle(
-                                      color: Colors.white70, fontSize: 16)),
-                              Text(item['to'],
-                                  style: const TextStyle(
-                                      color: Colors.white70, fontSize: 16)),
-                            ],
-                          ),
-                        ),
-                  ],
+              ],
 
-                  // Tombol cari toko musik
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const MapMusicScreen()),
-                      );
-                    },
-                    icon: const Icon(Icons.location_on, color: Colors.white),
-                    label: const Text(
-                      'Find the nearest music store',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MapMusicScreen()),
+                  );
+                },
+                icon: const Icon(Icons.location_on, color: Colors.white),
+                label: const Text(
+                  'Find the nearest music store',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

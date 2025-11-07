@@ -16,7 +16,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   final TextEditingController _eventNameController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   TimeOfDay? _selectedTime;
-  String _selectedZone = 'WIB'; 
+  String _selectedZone = 'WIB';
   List<Map<String, dynamic>> _reminders = [];
   bool _isAdding = false;
 
@@ -127,8 +127,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       if (dt.isBefore(DateTime.now())) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('The selected time must be after now!')),
+          const SnackBar(content: Text('The selected time must be after now!')),
         );
         setState(() => _isAdding = false);
         return;
@@ -142,7 +141,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         'id': id.toString(),
         'name': name,
         'datetime': dt.toIso8601String(),
-        'zone': _selectedZone, 
+        'zone': _selectedZone,
         'converted': converted,
       };
 
@@ -274,126 +273,115 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset('assets/background.png', fit: BoxFit.cover),
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-            child: Container(color: Colors.black.withOpacity(0.3)),
-          ),
-          SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                const Text(
-                  "Let’s keep your rhythm on track here!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                    shadows: [
-                      Shadow(
-                        color: Colors.purpleAccent,
-                        blurRadius: 10,
-                        offset: Offset(0, 0),
-                      ),
-                    ],
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            const Text(
+              "Let’s keep your rhythm on track here!",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w500,
+                shadows: [
+                  Shadow(
+                    color: Colors.purpleAccent,
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
                   ),
-                ),
-                const SizedBox(height: 25),
-                TextField(
-                  controller: _eventNameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white10,
-                    hintText: 'Schedule name',
-                    hintStyle: const TextStyle(color: Colors.white54),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                GestureDetector(
-                  onTap: _pickDate,
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.calendar_today,
-                            color: Colors.purpleAccent),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Date: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                GestureDetector(
-                  onTap: _pickTime,
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.access_time,
-                            color: Colors.purpleAccent),
-                        const SizedBox(width: 12),
-                        Text(
-                          _selectedTime == null
-                              ? 'Pick Time'
-                              : 'Time: ${_selectedTime!.format(context)}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildZoneDropdown(), 
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: _isAdding ? null : _addSchedule,
-                  icon: _isAdding
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
-                      : const Icon(Icons.add_alert, color: Colors.white),
-                  label: Text(
-                    _isAdding ? 'Adding...' : 'Add',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                if (sortedReminders.isNotEmpty)
-                  for (final r in sortedReminders) _buildScheduleCard(r)
-                else
-                  const Center(
-                      child: Text('No schedules yet.',
-                          style: TextStyle(color: Colors.white54))),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 25),
+            TextField(
+              controller: _eventNameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white10,
+                hintText: 'Schedule name',
+                hintStyle: const TextStyle(color: Colors.white54),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none),
+              ),
+            ),
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: _pickDate,
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  children: [
+                    const Icon(Icons.calendar_today,
+                        color: Colors.purpleAccent),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Date: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: _pickTime,
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  children: [
+                    const Icon(Icons.access_time, color: Colors.purpleAccent),
+                    const SizedBox(width: 12),
+                    Text(
+                      _selectedTime == null
+                          ? 'Pick Time'
+                          : 'Time: ${_selectedTime!.format(context)}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildZoneDropdown(),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: _isAdding ? null : _addSchedule,
+              icon: _isAdding
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white))
+                  : const Icon(Icons.add_alert, color: Colors.white),
+              label: Text(
+                _isAdding ? 'Adding...' : 'Add',
+                style: const TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+            if (sortedReminders.isNotEmpty)
+              for (final r in sortedReminders) _buildScheduleCard(r)
+            else
+              const Center(
+                  child: Text('No schedules yet.',
+                      style: TextStyle(color: Colors.white54))),
+          ],
+        ),
       ),
     );
   }
