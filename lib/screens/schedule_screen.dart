@@ -109,7 +109,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     if (_isAdding) return;
     if (_eventNameController.text.isEmpty || _selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete the name and time!')),
+        const SnackBar(content: Text('Lengkapi nama dan waktu terlebih dahulu!')),
       );
       return;
     }
@@ -127,7 +127,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
       if (dt.isBefore(DateTime.now())) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('The selected time must be after now!')),
+          const SnackBar(content: Text('Jadwal yang dimasukkan harus di atas waktu sekarang!')),
         );
         setState(() => _isAdding = false);
         return;
