@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // ✅ Hitam polos
+      backgroundColor: Colors.black, 
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -164,7 +164,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        // ✅ Hanya teks username tanpa kotak
         Text(
           widget.username,
           style: const TextStyle(
@@ -185,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         padding: const EdgeInsets.all(25),
         decoration: BoxDecoration(
-          color: Colors.grey[900], // ✅ Warna abu gelap seperti input field
+          color: Colors.grey[900], 
           borderRadius: BorderRadius.circular(25),
           border: Border.all(color: Colors.grey[800]!),
         ),
@@ -250,7 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[850], // ✅ abu gelap seperti halaman lain
+            fillColor: Colors.grey[850],
             hintText: "Tulis kesan dan pesan!",
             hintStyle: const TextStyle(color: Colors.white54),
             border: OutlineInputBorder(

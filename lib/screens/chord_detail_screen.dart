@@ -21,7 +21,7 @@ class ChordDetailScreen extends StatefulWidget {
 class _ChordDetailScreenState extends State<ChordDetailScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   DateTime _lastShakeTime = DateTime.now();
-  final double _shakeThreshold = 1.2;
+  final double _shakeThreshold = 1.5;
   bool _isPlaying = false;
 
   @override
@@ -60,7 +60,8 @@ class _ChordDetailScreenState extends State<ChordDetailScreen> {
     try {
       setState(() => _isPlaying = true);
       await _audioPlayer.play(AssetSource("audio/$fileName.mp3"));
-      await Future.delayed(const Duration(seconds: 2));
+      //Efek tampilan souund ketika diplay
+      await Future.delayed(const Duration(seconds: 5));
       setState(() => _isPlaying = false);
     } catch (e) {
       debugPrint("Error playing audio: $e");
@@ -94,11 +95,8 @@ class _ChordDetailScreenState extends State<ChordDetailScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'assets/background.png',
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(color: Colors.black),
-          ),
+    
+          Container(color: Colors.black),
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
             child: Container(color: Colors.black.withOpacity(0.4)),
@@ -111,8 +109,8 @@ class _ChordDetailScreenState extends State<ChordDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AnimatedContainer(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut,
+                      duration: const Duration(milliseconds: 1200), 
+                      curve: Curves.easeInOutCubic,
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: _isPlaying
@@ -124,9 +122,9 @@ class _ChordDetailScreenState extends State<ChordDetailScreen> {
                         boxShadow: [
                           if (_isPlaying)
                             BoxShadow(
-                              color: Colors.purpleAccent.withOpacity(0.6),
-                              blurRadius: 30,
-                              spreadRadius: 4,
+                              color: Colors.purpleAccent.withOpacity(0.5),
+                              blurRadius: 40,
+                              spreadRadius: 6,
                             ),
                         ],
                       ),
@@ -150,7 +148,7 @@ class _ChordDetailScreenState extends State<ChordDetailScreen> {
                     ),
                     const SizedBox(height: 30),
                     AnimatedOpacity(
-                      duration: const Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 700),
                       opacity: _isPlaying ? 1 : 0.8,
                       child: Text(
                         _isPlaying
@@ -167,18 +165,10 @@ class _ChordDetailScreenState extends State<ChordDetailScreen> {
                             if (_isPlaying)
                               const Shadow(
                                 color: Colors.purpleAccent,
-                                blurRadius: 12,
+                                blurRadius: 16,
                               ),
                           ],
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Cyruz • Guitar Chord Companion",
-                      style: TextStyle(
-                        color: Colors.white24,
-                        fontSize: 14,
                       ),
                     ),
                   ],
