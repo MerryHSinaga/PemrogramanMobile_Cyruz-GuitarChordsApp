@@ -43,7 +43,6 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
         throw Exception('Izin lokasi ditolak permanen.');
       }
 
-      // Posisi awal pengguna
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
@@ -51,14 +50,12 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
 
       setState(() => _currentPosition = currentPos);
 
-      //Mengambil data toko musik 
       await _fetchMusicStores(currentPos);
 
-      //Lokasi
       _positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.best,
-          distanceFilter: 2, 
+          distanceFilter: 2,
         ),
       );
 
@@ -71,7 +68,6 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
         _updateDistances(newPos);
       });
     } catch (e) {
-      print("❌ Error lokasi: $e");
       setState(() => _error = e.toString());
     } finally {
       setState(() => _isLoading = false);
@@ -116,20 +112,23 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
             point: LatLng(coords[1], coords[0]),
             child: GestureDetector(
               onTap: () => _showStoreDetails(store),
-              child: const Icon(Icons.location_on, color: Colors.red, size: 40),
+              child: const Icon(Icons.location_on,
+                  color: Color.fromARGB(255, 21, 180, 74), size: 40),
             ),
           ),
         );
       }
 
-      // Lokasi pengguna
       newMarkers.add(
         Marker(
           width: 60,
           height: 60,
           point: pos,
-          child: const Icon(Icons.person_pin_circle,
-              color: Colors.blueAccent, size: 45),
+          child: const Icon(
+            Icons.person_pin_circle,
+            color: Color.fromARGB(255, 19, 46, 93),
+            size: 45,
+          ),
         ),
       );
 
@@ -152,7 +151,8 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
     );
 
     final otherMarkers = _markers.where((m) =>
-        m.child is! Icon || (m.child as Icon).icon != Icons.person_pin_circle);
+        m.child is! Icon ||
+        (m.child as Icon).icon != Icons.person_pin_circle);
 
     setState(() {
       _markers = [...otherMarkers, userMarker];
@@ -181,23 +181,60 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
     }
   }
 
+  //list store music
+
   void _showStoreList() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
       builder: (ctx) {
         return ListView.builder(
+          padding: const EdgeInsets.all(12),
           itemCount: _stores.length,
           itemBuilder: (context, index) {
             final store = _stores[index];
-            return ListTile(
-              title: Text(store['name']),
-              subtitle: Text(store['address']),
-              trailing: Text("${store['distance'].toStringAsFixed(0)} m"),
-              onTap: () {
-                Navigator.pop(context);
-                _mapController.move(LatLng(store['lat'], store['lon']), 16);
-                _showStoreDetails(store);
-              },
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 231, 233, 255), //daftar toko
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12.withOpacity(0.06),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: ListTile(
+                title: Text(
+                  store['name'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A2B5B),
+                  ),
+                ),
+                subtitle: Text(
+                  store['address'],
+                  style: const TextStyle(color: Colors.black54),
+                ),
+                trailing: Text(
+                  "${store['distance'].toStringAsFixed(0)} m",
+                  style: const TextStyle(
+                    color: Color(0xFF1A2B5B),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _mapController.move(
+                      LatLng(store['lat'], store['lon']), 16);
+                  _showStoreDetails(store);
+                },
+              ),
             );
           },
         );
@@ -205,30 +242,64 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
     );
   }
 
+  //Detail store music
   void _showStoreDetails(Map<String, dynamic> store) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
       builder: (context) {
         return Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(store['name'],
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18)),
+              Text(
+                store['name'],
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 19,
+                  color: Color(0xFF1A2B5B),
+                ),
+              ),
               const SizedBox(height: 8),
-              Text(store['address']),
+              Text(
+                store['address'],
+                style: const TextStyle(color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 8),
-              Text("Jarak: ${store['distance'].toStringAsFixed(0)} meter"),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _showRouteToStore(LatLng(store['lat'], store['lon']));
-                },
-                icon: const Icon(Icons.alt_route),
-                label: const Text("Tunjukkan Rute"),
+              Text(
+                "Jarak: ${store['distance'].toStringAsFixed(0)} meter",
+                style: const TextStyle(
+                  color: Color(0xFF1A2B5B),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1A2B5B),
+                    foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showRouteToStore(
+                        LatLng(store['lat'], store['lon']));
+                  },
+                  icon: const Icon(Icons.alt_route, size: 20),
+                  label: const Text("Tunjukkan Rute",
+                      style: TextStyle(fontSize: 16)),
+                ),
               ),
             ],
           ),
@@ -245,7 +316,6 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode != 200) {
-      print("Gagal ambil rute: ${response.body}");
       return;
     }
 
@@ -258,7 +328,11 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
 
     setState(() {
       _route = [
-        Polyline(points: points, strokeWidth: 5, color: const Color.fromARGB(255, 54, 123, 241))
+        Polyline(
+          points: points,
+          strokeWidth: 5,
+          color: const Color.fromARGB(255, 54, 123, 241),
+        )
       ];
     });
 
@@ -311,16 +385,16 @@ class _MapMusicScreenState extends State<MapMusicScreen> {
         children: [
           FloatingActionButton(
             heroTag: 'my_location',
-            backgroundColor: Colors.blue,
+            backgroundColor: const Color(0xFF1A2B5B),
             onPressed: _goToMyLocation,
-            child: const Icon(Icons.my_location),
+            child: const Icon(Icons.my_location, color: Color.fromARGB(255, 255, 255, 255)),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           FloatingActionButton(
             heroTag: 'list_stores',
-            backgroundColor: const Color.fromARGB(255, 192, 14, 14),
+            backgroundColor: const Color.fromARGB(255, 25, 177, 76),
             onPressed: _showStoreList,
-            child: const Icon(Icons.list),
+            child: const Icon(Icons.list, color: Colors.white),
           ),
         ],
       ),
@@ -335,11 +409,19 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title, style: const TextStyle(color: Colors.white)),
+      title: Text(
+        title,
+        style:
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      centerTitle: true,
       flexibleSpace: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 53, 157, 241), Colors.indigo],
+            colors: [
+              Color.fromARGB(255, 31, 73, 131),
+              Color.fromARGB(255, 8, 41, 140),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
