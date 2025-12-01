@@ -3,7 +3,7 @@ import '../services/notification_service.dart';
 import 'chords_screen.dart';
 import 'convert_screen.dart';
 import 'schedule_screen.dart';
-import 'profile_screen.dart';
+import 'profile_screen.dart' as profile;
 
 class HomeScreen extends StatefulWidget {
   final String username;
@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
     NotificationService.init();
     NotificationService.requestPermissionIfNeeded();
 
-    // Notifikasi aplikasi dibuka
     Future.delayed(const Duration(seconds: 1), () {
       NotificationService.showInstant(
         id: 111,
@@ -34,9 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _screens = [
       const ChordsScreen(),
-      const ConvertScreen(),
+      ConvertScreen(),
       ScheduleScreen(userId: widget.username),
-      ProfileScreen(username: widget.username),
+      profile.ProfileScreen(username: widget.username), 
     ];
   }
 
@@ -45,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
 
-      // AppBar 
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -61,8 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color(0xFF1976D2),
-                Color(0xFF0D47A1), 
+                Color.fromARGB(255, 15, 100, 185),
+              Color(0xFF1A2B5B),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -73,13 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
       body: _screens[_currentIndex],
 
-      // Bottom Navigasi
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
-              Color(0xFF1976D2),
-              Color(0xFF0D47A1),
+              Color.fromARGB(255, 15, 100, 185),
+              Color(0xFF1A2B5B),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -90,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.blueAccent.withOpacity(0.35),
+              color: const Color.fromARGB(255, 32, 67, 127).withOpacity(0.35),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -116,8 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: 'Chords',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.money),
-                label: 'Price Check',
+                icon: Icon(Icons.note_add_outlined),
+                label: 'Guitars',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.schedule),

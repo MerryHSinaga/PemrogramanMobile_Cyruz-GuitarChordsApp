@@ -12,7 +12,6 @@ dependencies:
   sqflite: ^2.3.0
   path: ^1.8.3
   crypto: ^3.0.3 
-  shared_preferences: ^2.2.3
   cupertino_icons: ^1.0.8
   image_picker: ^1.1.2
   google_fonts: ^6.1.0
@@ -29,6 +28,7 @@ dependencies:
   sensors_plus: ^3.1.0
   audioplayers: ^5.2.1
   flutter_cache_manager: ^3.3.1  
+  shared_preferences: ^2.5.3
 
 
 dev_dependencies:
@@ -41,10 +41,25 @@ flutter:
   assets:
     - assets/background.png
     - assets/cyruz.png
-    - assets/audio/a_major.mp3
-    - assets/audio/a_minor.mp3
-    - assets/audio/b_major.mp3
-    - assets/audio/b_minor.mp3
-    - assets/audio/c_major.mp3
-    - assets/audio/c_minor.mp3
-    - assets/audio/all.mp3
+  
+    - assets/audio/A_major.mp3
+    - assets/audio/A_minor.mp3
+    - assets/audio/B_major.mp3
+    - assets/audio/B_minor.mp3
+    - assets/audio/C#_major.mp3
+    - assets/audio/C_major.mp3
+    - assets/audio/C_minor.mp3
+    - assets/audio/D_major.mp3
+    - assets/audio/D_minor.mp3
+    - assets/audio/E_major.mp3
+    - assets/audio/E_minor.mp3
+    - assets/audio/F_major.mp3
+    - assets/audio/F_minor.mp3
+    - assets/audio/G_major.mp3
+    - assets/audio/G_minor.mp3
+    - assets/audio/C#_minor.mp3
+    - assets/audio/D#_major.mp3
+    - assets/audio/F#_major.mp3
+    - assets/audio/G#_major.mp3
+    - assets/audio/G#_minor.mp3
+

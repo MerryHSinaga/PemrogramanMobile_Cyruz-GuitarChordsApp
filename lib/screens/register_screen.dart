@@ -56,6 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Registrasi berhasil! Silahkan login.')),
       );
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -70,6 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
@@ -103,30 +105,25 @@ class _RegisterScreenState extends State<RegisterScreen>
                       ),
                     ),
                     const SizedBox(height: 4),
-                    ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [Color.fromARGB(255, 255, 255, 255), Color.fromARGB(255, 41, 133, 224)],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ).createShader(bounds),
-                      child: const Text(
-                        "start your musical journey!",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w700,
-                        ),
+                    const Text(
+                      "Start your musical journey!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 40),
+
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.55),
+                        color: Colors.white.withOpacity(0.95),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white.withOpacity(0.12)),
+                        border:
+                            Border.all(color: const Color(0xFF123458), width: 1),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -134,53 +131,58 @@ class _RegisterScreenState extends State<RegisterScreen>
                           const Text(
                             'Daftar Akun',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF123458),
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 20),
+
                           TextField(
                             controller: usernameController,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black87),
                             decoration: InputDecoration(
                               labelText: 'Username',
-                              labelStyle: const TextStyle(color: Colors.white70),
+                              labelStyle: const TextStyle(color: Colors.black54),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.06),
+                              fillColor: Colors.grey[200],
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
                           ),
                           const SizedBox(height: 12),
+
                           TextField(
                             controller: passwordController,
                             obscureText: true,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black87),
                             decoration: InputDecoration(
                               labelText: 'Password',
-                              labelStyle: const TextStyle(color: Colors.white70),
+                              labelStyle: const TextStyle(color: Colors.black54),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.06),
+                              fillColor: Colors.grey[200],
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
                           ),
+
                           const SizedBox(height: 20),
+
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: _loading ? null : _register,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 56, 130, 234),
+                                backgroundColor: const Color(0xFF123458),
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 elevation: 6,
-                                shadowColor: const Color.fromARGB(255, 60, 148, 235).withOpacity(0.6),
+                                shadowColor: const Color(0xFF123458)
+                                    .withOpacity(0.6),
                               ),
                               child: _loading
                                   ? const SizedBox(
@@ -197,19 +199,13 @@ class _RegisterScreenState extends State<RegisterScreen>
                                         color: Colors.white,
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.8,
-                                        shadows: [
-                                          Shadow(
-                                            color: Colors.black54,
-                                            offset: Offset(1, 1),
-                                            blurRadius: 3,
-                                          ),
-                                        ],
                                       ),
                                     ),
                             ),
                           ),
+
                           const SizedBox(height: 12),
+
                           SizedBox(
                             width: double.infinity,
                             child: OutlinedButton(
@@ -219,29 +215,27 @@ class _RegisterScreenState extends State<RegisterScreen>
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (_) =>
-                                                const LoginScreen()),
+                                          builder: (_) => const LoginScreen(),
+                                        ),
                                       );
                                     },
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.white,
+                                foregroundColor: const Color(0xFF123458),
                                 side: const BorderSide(
-                                    color: Colors.white70, width: 1),
+                                    color: Color(0xFF123458), width: 1.5),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                backgroundColor:
-                                    Colors.white.withOpacity(0.05),
+                                    const EdgeInsets.symmetric(vertical: 14),
+                                backgroundColor: Colors.white,
                               ),
                               child: const Text(
                                 'Sudah punya akun? Login',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF123458),
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.3,
                                 ),
                               ),
                             ),
@@ -259,3 +253,5 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 }
+
+

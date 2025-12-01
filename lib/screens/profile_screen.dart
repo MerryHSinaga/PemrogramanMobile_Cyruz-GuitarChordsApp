@@ -1,7 +1,7 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../screens/login_screen.dart';
+import 'login_screen.dart';
+import 'favorites_screen.dart';
+import 'map_music_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username;
@@ -12,90 +12,20 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String kesanPesan = "Mata kuliah ini sangat membantu saya untuk menambah portofolio saya, saya belajar banyak hal dalam pengembangan aplikasi Mobile meskipun capek banget tidur cuman 2 jam. Sekian.";
-  bool isEditing = false;
-  final TextEditingController controller = TextEditingController();
+  static const Color primaryColor = Color(0xFF1A2B5B);
 
-  static const Color primaryColor = Color.fromARGB(255, 64, 148, 251);
+  bool showKesan = false;
+  bool showPesan = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadSavedMessage();
-  }
+  final String kesanText =
+      "Mata kuliah ini sangat membantu saya dalam menambah portofolio dan keterampilan mobile development saya. "
+      "Meskipun baru pertama kali menyentuh pemrograman aplikasi mobile, menurut saya mata kuliah ini cukup "
+      "menantang dan menarik (menarik jam tidur saya maksudnya).";
 
-  Future<void> _loadSavedMessage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'kesanPesan_${widget.username}';
-    final saved = prefs.getString(key);
-    setState(() {
-      kesanPesan = saved ?? kesanPesan;
-      controller.text = kesanPesan;
-    });
-  }
-
-  Future<void> _saveMessage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'kesanPesan_${widget.username}';
-    await prefs.setString(key, controller.text);
-    setState(() {
-      kesanPesan = controller.text;
-      isEditing = false;
-    });
-
-    showDialog(
-      context: context,
-      builder: (_) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              padding: const EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.check_circle_outline,
-                      color: Color.fromARGB(255, 62, 157, 236), size: 40),
-                  const SizedBox(height: 15),
-                  const Text(
-                    "Berhasil Disimpan!",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 5),
-                  const Text(
-                    "Kesan dan pesan kamu telah diperbarui.",
-                    style: TextStyle(color: Colors.white70),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      "OK",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 60, 122, 235),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  final String pesanText =
+      "Semoga kedepannya aplikasi ini bisa lebih dikembangkan karena masih terbilang cukup sederhana. "
+      "Semangat buat adik-adik tingkat yang akan menghadapi mata kuliah pemrograman aplikasi mobile dan semua "
+      "gebrakan tak terduga yang terjadi. Mungkin lain kali bisa menyicil project akhir agar bisa tidur nyenyak 24 jam hehe.";
 
   void _logout() {
     Navigator.pushAndRemoveUntil(
@@ -105,229 +35,298 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/background.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              const SizedBox(height: 10),
-              const Text(
-                "Cyruz is glad to have you here, let’s keep your profile in tune.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w500,
-                  shadows: [
-                    Shadow(
-                      color: Color.fromARGB(255, 64, 94, 204),
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 25),
-              _buildProfileHeader(),
-              const SizedBox(height: 40),
-              _buildMessageCard(),
-              const SizedBox(height: 40),
-              _buildLogoutButton(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileHeader() {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: const Color.fromARGB(255, 62, 121, 249).withOpacity(0.6), width: 3),
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(255, 69, 109, 243).withOpacity(0.5),
-                blurRadius: 20,
-                spreadRadius: 3,
-              ),
-            ],
-          ),
-          child: const CircleAvatar(
-            radius: 65,
-            backgroundImage: AssetImage('assets/cyruz.png'),
-            backgroundColor: Colors.black54,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Text(
-          widget.username,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            letterSpacing: 1.2,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMessageCard() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
+  Widget _menuCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    Gradient? gradient,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(25),
+        margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1F1F1F),
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: Colors.white12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  "Kesan dan Pesan",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                const Spacer(),
-                _buildEditButton(),
-              ],
+          gradient: gradient ??
+              const LinearGradient(
+                colors: [Color(0xFF324D7A), Color(0xFF182447)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.18),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            const Divider(color: Colors.white38, height: 30),
-            if (isEditing) _buildEditingSection() else _buildMessageText(),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.16),
+              ),
+              child: Icon(icon, color: Colors.white, size: 26),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.85),
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios,
+                size: 16, color: Colors.white),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMessageText() => Text(
-        kesanPesan,
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-          height: 1.5,
-        ),
-      );
-
-  Widget _buildEditButton() {
-    return IconButton(
-      icon: Icon(
-        isEditing ? Icons.close_rounded : Icons.edit_note_rounded,
-        color: isEditing ? Colors.redAccent : primaryColor,
-        size: 30,
-      ),
-      onPressed: () {
-        setState(() {
-          isEditing = !isEditing;
-          if (!isEditing) controller.text = kesanPesan;
-        });
-      },
-      splashRadius: 28,
-    );
-  }
-
-  Widget _buildEditingSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF1F1F1F),
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.white12),
-          ),
-          child: TextField(
-            controller: controller,
-            maxLines: 4,
-            style: const TextStyle(color: Colors.white),
-            decoration: const InputDecoration(
-              hintText: "Tulis kesan dan pesan!",
-              hintStyle: TextStyle(color: Colors.white54),
-              contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-              border: InputBorder.none,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-        Container(
-          height: 52,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF42A5F5), Color(0xFF0D47A1)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(color: Colors.blueAccent.withOpacity(0.5), blurRadius: 12, offset: Offset(0, 4)),
-            ],
-          ),
-          child: ElevatedButton.icon(
-            onPressed: _saveMessage,
-            icon: const Icon(Icons.send_rounded, color: Colors.white),
-            label: const Text(
-              "Simpan",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLogoutButton() {
+  Widget _expandableCard({
+    required IconData icon,
+    required String title,
+    required String text,
+    required bool expanded,
+    required VoidCallback onToggle,
+  }) {
     return Container(
-      height: 52,
+      margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF42A5F5), Color(0xFF0D47A1)],
+          colors: [Color(0xFF324D7A), Color(0xFF182447)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
-          BoxShadow(color: Colors.blueAccent.withOpacity(0.5), blurRadius: 12, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.18),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
         ],
       ),
-      child: ElevatedButton.icon(
-        onPressed: _logout,
-        icon: const Icon(Icons.logout, color: Colors.white),
-        label: const Text(
-          "Log Out",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: onToggle,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.16),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 26),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: expanded ? 0.25 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: const Icon(Icons.arrow_forward_ios,
+                        size: 16, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              child: Text(
+                text,
+                textAlign: TextAlign.justify,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.5,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            crossFadeState: expanded
+                .toCrossFadeState(),
+            duration: const Duration(milliseconds: 250),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+          child: Column(
+            children: [
+              const SizedBox(height: 6),
+              Text(
+                "Cyruz is glad to have you here, let’s keep your profile in tune.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: primaryColor.withOpacity(0.95),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: primaryColor, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor.withOpacity(0.35),
+                        blurRadius: 26,
+                        spreadRadius: 3,
+                      )
+                    ],
+                  ),
+                  child: const CircleAvatar(
+                    radius: 64,
+                    backgroundImage: AssetImage('assets/cyruz.png'),
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                widget.username,
+                style: const TextStyle(
+                  color: primaryColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.6,
+                ),
+              ),
+              const SizedBox(height: 22),
+
+              _menuCard(
+                icon: Icons.star_rounded,
+                title: "Favorite",
+                subtitle: "Daftar gitar favorit Anda",
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => FavoriteScreen())),
+              ),
+              _menuCard(
+                icon: Icons.location_on_rounded,
+                title: "Toko Musik Terdekat",
+                subtitle: "Cari toko musik di sekitar Anda",
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const MapMusicScreen())),
+              ),
+
+              _expandableCard(
+                icon: Icons.message_rounded,
+                title: "Kesan",
+                text: kesanText,
+                expanded: showKesan,
+                onToggle: () {
+                  setState(() => showKesan = !showKesan);
+                },
+              ),
+              _expandableCard(
+                icon: Icons.mark_chat_read_rounded,
+                title: "Pesan",
+                text: pesanText,
+                expanded: showPesan,
+                onToggle: () {
+                  setState(() => showPesan = !showPesan);
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              Container(
+                width: double.infinity,
+                height: 52,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF1A2B5B),
+                      Color.fromARGB(255, 39, 77, 149),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF1A2B5B).withOpacity(0.25),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: _logout,
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  label: const Text(
+                    "Log Out",
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 26),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+extension _ on bool {
+  CrossFadeState toCrossFadeState() =>
+      this ? CrossFadeState.showSecond : CrossFadeState.showFirst;
 }
