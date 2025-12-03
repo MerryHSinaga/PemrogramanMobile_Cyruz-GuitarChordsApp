@@ -1,4 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
 import 'login_screen.dart';
 import 'favorites_screen.dart';
 import 'map_music_screen.dart';
@@ -14,18 +18,99 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   static const Color primaryColor = Color(0xFF1A2B5B);
 
-  bool showKesan = false;
-  bool showPesan = false;
+  File? profileImage;
+  final ImagePicker _picker = ImagePicker();
 
-  final String kesanText =
-      "Mata kuliah ini sangat membantu saya dalam menambah portofolio dan keterampilan mobile development saya. "
-      "Meskipun baru pertama kali menyentuh pemrograman aplikasi mobile, menurut saya mata kuliah ini cukup "
-      "menantang dan menarik (menarik jam tidur saya maksudnya).";
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+  }
 
-  final String pesanText =
-      "Semoga kedepannya aplikasi ini bisa lebih dikembangkan karena masih terbilang cukup sederhana. "
-      "Semangat buat adik-adik tingkat yang akan menghadapi mata kuliah pemrograman aplikasi mobile dan semua "
-      "gebrakan tak terduga yang terjadi. Mungkin lain kali bisa menyicil project akhir agar bisa tidur nyenyak 24 jam hehe.";
+  Future<bool> _requestCameraPermission() async {
+    var status = await Permission.camera.status;
+    if (status.isDenied) status = await Permission.camera.request();
+    return status.isGranted;
+  }
+
+  Future<bool> _requestGalleryPermission() async {
+    var status = await Permission.photos.status;
+    if (status.isDenied) status = await Permission.photos.request();
+    return status.isGranted;
+  }
+
+  Future<void> _loadProfileImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final path = prefs.getString("profile_image_${widget.username}");
+
+    if (path != null) {
+      setState(() {
+        profileImage = File(path);
+      });
+    }
+  }
+
+  Future<void> _saveProfileImage(String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("profile_image_${widget.username}", path);
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    bool granted = false;
+
+    if (source == ImageSource.camera) {
+      granted = await _requestCameraPermission();
+    } else {
+      granted = await _requestGalleryPermission();
+    }
+
+    if (!granted) return;
+
+    final pickedFile = await _picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        profileImage = File(pickedFile.path);
+      });
+
+      _saveProfileImage(pickedFile.path);
+    }
+  }
+
+  void _showImagePickerOptions() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library_rounded),
+                title: const Text("Pilih dari Galeri"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_rounded),
+                title: const Text("Gunakan Kamera"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   void _logout() {
     Navigator.pushAndRemoveUntil(
@@ -102,90 +187,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _expandableCard({
-    required IconData icon,
-    required String title,
-    required String text,
-    required bool expanded,
-    required VoidCallback onToggle,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF324D7A), Color(0xFF182447)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.18),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
-      ),
-      child: Column(
-        children: [
-          GestureDetector(
-            onTap: onToggle,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.16),
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 26),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    ),
-                  ),
-                  AnimatedRotation(
-                    turns: expanded ? 0.25 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: const Icon(Icons.arrow_forward_ios,
-                        size: 16, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          AnimatedCrossFade(
-            firstChild: const SizedBox.shrink(),
-            secondChild: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-              child: Text(
-                text,
-                textAlign: TextAlign.justify,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.5,
-                  height: 1.5,
-                ),
-              ),
-            ),
-            crossFadeState: expanded
-                .toCrossFadeState(),
-            duration: const Duration(milliseconds: 250),
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,26 +207,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: primaryColor, width: 3),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primaryColor.withOpacity(0.35),
-                        blurRadius: 26,
-                        spreadRadius: 3,
-                      )
-                    ],
-                  ),
-                  child: const CircleAvatar(
-                    radius: 64,
-                    backgroundImage: AssetImage('assets/cyruz.png'),
-                    backgroundColor: Colors.white,
+
+              GestureDetector(
+                onTap: _showImagePickerOptions,
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: primaryColor, width: 3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primaryColor.withOpacity(0.35),
+                          blurRadius: 26,
+                          spreadRadius: 3,
+                        )
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 64,
+                      backgroundColor: Colors.white,
+                      backgroundImage: profileImage != null
+                          ? FileImage(profileImage!) as ImageProvider
+                          : const AssetImage('assets/cyruz.png'),
+                    ),
                   ),
                 ),
               ),
+
               const SizedBox(height: 14),
               Text(
                 widget.username,
@@ -247,6 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     MaterialPageRoute(
                         builder: (_) => FavoriteScreen())),
               ),
+
               _menuCard(
                 icon: Icons.location_on_rounded,
                 title: "Toko Musik Terdekat",
@@ -255,25 +264,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (_) => const MapMusicScreen())),
-              ),
-
-              _expandableCard(
-                icon: Icons.message_rounded,
-                title: "Kesan",
-                text: kesanText,
-                expanded: showKesan,
-                onToggle: () {
-                  setState(() => showKesan = !showKesan);
-                },
-              ),
-              _expandableCard(
-                icon: Icons.mark_chat_read_rounded,
-                title: "Pesan",
-                text: pesanText,
-                expanded: showPesan,
-                onToggle: () {
-                  setState(() => showPesan = !showPesan);
-                },
               ),
 
               const SizedBox(height: 20),
@@ -295,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     BoxShadow(
                       color: Color(0xFF1A2B5B).withOpacity(0.25),
                       blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                     )
                   ],
                 ),
@@ -324,9 +314,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-}
-
-extension _ on bool {
-  CrossFadeState toCrossFadeState() =>
-      this ? CrossFadeState.showSecond : CrossFadeState.showFirst;
 }
